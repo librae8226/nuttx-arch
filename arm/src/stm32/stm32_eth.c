@@ -266,7 +266,7 @@
  * second
  */
 
-#define STM32_WDDELAY     (1*CLK_TCK)
+#define STM32_WDDELAY     (100000/CONFIG_USEC_PER_TICK)
 #define STM32_POLLHSEC    (1*2)
 
 /* TX timeout = 1 minute */
