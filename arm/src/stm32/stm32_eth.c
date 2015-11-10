@@ -283,6 +283,7 @@
 #define PHY_READ_TIMEOUT  (0x0004ffff)
 #define PHY_WRITE_TIMEOUT (0x0004ffff)
 #define PHY_RETRY_TIMEOUT (0x0004ffff)
+#define PHY_RETRY_MS      (4999)
 
 /* Register values **********************************************************/
 
@@ -3316,7 +3317,7 @@ static int stm32_phyinit(FAR struct stm32_ethmac_s *priv)
 #ifdef CONFIG_STM32_AUTONEG
   /* Wait for link status */
 
-  for (timeout = 0; timeout < PHY_RETRY_TIMEOUT; timeout++)
+  for (timeout = 0; timeout < PHY_RETRY_MS; timeout++)
     {
       ret = stm32_phyread(CONFIG_STM32_PHYADDR, MII_MSR, &phyval);
       if (ret < 0)
@@ -3328,9 +3329,10 @@ static int stm32_phyinit(FAR struct stm32_ethmac_s *priv)
         {
           break;
         }
+      usleep(1000);
     }
 
-  if (timeout >= PHY_RETRY_TIMEOUT)
+  if (timeout >= PHY_RETRY_MS)
     {
       ndbg("Timed out waiting for link status: %04x\n", phyval);
       return -ETIMEDOUT;
@@ -3347,7 +3349,7 @@ static int stm32_phyinit(FAR struct stm32_ethmac_s *priv)
 
   /* Wait until auto-negotiation completes */
 
-  for (timeout = 0; timeout < PHY_RETRY_TIMEOUT; timeout++)
+  for (timeout = 0; timeout < PHY_RETRY_MS; timeout++)
     {
       ret = stm32_phyread(CONFIG_STM32_PHYADDR, MII_MSR, &phyval);
       if (ret < 0)
@@ -3359,9 +3361,10 @@ static int stm32_phyinit(FAR struct stm32_ethmac_s *priv)
         {
           break;
         }
+      usleep(1000);
     }
 
-  if (timeout >= PHY_RETRY_TIMEOUT)
+  if (timeout >= PHY_RETRY_MS)
     {
       ndbg("Timed out waiting for auto-negotiation\n");
       return -ETIMEDOUT;
